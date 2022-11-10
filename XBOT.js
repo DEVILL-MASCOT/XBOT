@@ -34,6 +34,7 @@ const Xtod = require("tod-api")
 const { pinterest } = require("./lib/pinterest")
 const toHur = require('@develoka/angka-terbilang-js')
 const { hentai } = require('./lib/scraper2.js')
+const { youtubeSearch, youtubedl, youtubedlv2, youtubedlv3 } = require('@bochilteam/scraper')
 const {
  FajarNews, 
  BBCNews,
@@ -6094,11 +6095,11 @@ break
 	    })
 	    }
 	    break
-	case 'yts': case 'ytsearch': {
-   if (isBan) return reply(mess.ban)	 			
+case 'yts': case 'ytsearch': {
+if (isBan) return reply(mess.ban)	 			
 if (isBanChat) return reply(mess.banChat)
 if (!args.join(" ")) return replay(`Example : ${prefix + command} stay jb`)
-let yts = require("yt-search")
+let yts = require("youtubeSearch")
 let search = await yts(args.join(" "))
 let teks = '*| YOUTUBE SEARCH |*\n\n Result From '+text+'\n\n'
 let no = 1
@@ -7992,7 +7993,7 @@ case 'ttaud':{
 case 'music': case 'play': case 'song': case 'ytplay': {
 if (isBan) return reply(mess.ban)	 			
 if (isBanChat) return reply(mess.banChat)
-let yts = require("yt-search")
+let yts = require("youtubeSearch")
 let search = await yts(text)
 let anu = search.videos[Math.floor(Math.random() * search.videos.length)]
 let ytvc = await hx.youtube(anu.url)
@@ -8071,7 +8072,12 @@ break
 case 'ytvd': {
    if (isBan) return reply(mess.ban)	 			
 if (isBanChat) return reply(mess.banChat)
-XBotInc.sendMessage(from, {video:{url:args[0]}, mimetype:"video/mp4", caption:"Success", contextInfo:{externalAdReply:{
+let vid = (await youtubeSearch(args[0]})).video[0]
+let { title, description, thumbnail, videoId, durationH, viewH, publishedTime } = vid
+const url = 'https://www.youtube.com/watch?v=' + videoId
+const yt =  await youtubedlv2(url).catch(async _ => await youtubedl(url)).catch(async _ => await youtubedlv3(url))
+const link = await yt.audio['128kbps'].download()
+XBotInc.sendMessage(from, {video:{url: link, mimetype:"video/mp4", caption:"Success", contextInfo:{externalAdReply:{
 title:`${global.botname}`,
 body:`${global.botname}`,
 thumbnail: log0,
@@ -8082,9 +8088,13 @@ sourceUrl: `${global.websitex}`
 }
 break
 case 'ytad': {
-   if (isBan) return reply(mess.ban)	 			
+if (isBan) return reply(mess.ban)	 			
 if (isBanChat) return reply(mess.banChat)
-XBotInc.sendMessage(from, {audio:{url:args[0]}, mimetype:"audio/mp4", ptt:true, contextInfo:{externalAdReply:{
+let vid = (await youtubeSearch(args[0]})).video[0]
+let { title, description, thumbnail, videoId, durationH, viewH, publishedTime } = vid
+const url = 'https://www.youtube.com/watch?v=' + videoId
+const link = await yt.audio['128kbps'].download()
+XBotInc.sendMessage(from, {audio:{url:link, mimetype:"audio/mp4", ptt:true, contextInfo:{externalAdReply:{
 title:`${global.botname}`,
 body:`${global.botname}`,
 thumbnail: log0,
@@ -8099,7 +8109,7 @@ break
 	if (isBanChat) return reply(mess.banChat)
                 if (!text) return reply(mess.linkm)
                 if (!isUrl(args[0]) && !args[0].includes('youtube.com')) return reply(`The link you provided is invalid`)
-                anu = await fetchJson(`https://api.akuari.my.id/downloader/youtube?link=${text}`)        
+		anu = await youtubedlv2(url).catch(async _ => await youtubedl(url)).catch(async _ => await youtubedlv3(url))
                 if (anu.filesize_video >= 999999) return reply('*File Over Limit* '+util.format(anu))
                 tummb = await getBuffer(anu.thumb)
                 audio = await getBuffer(anu.audio)        
